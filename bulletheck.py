@@ -9,7 +9,12 @@ def main():
 	player_speed = 20
 	player_spawn = Point(winX / 2, winY * (2/3))
 
+	attack1 = Straight(Point(100,100), 1, 5, 5, Point(0,1))
+	pattern = attack1.pattern
+
 	window = GraphWin(winName, winX, winY, autoflush=False)
+
+	print(pattern)
 
 	wallpaper = Image(winCenter, "space.gif")
 	wallpaper.draw(window)

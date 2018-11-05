@@ -92,3 +92,29 @@ class Bullet(Projectile):
 			return True
 
 		return False
+
+
+class Attack():
+
+	"""Generic base class for all enemy attack patterns. Attacks spawn from a given location and consist of projectile objects."""
+
+	def __init__(self, position, rof):
+		self.position = position
+
+
+class Straight(Attack):
+
+	"""Straight attacks consist of a number of bullets travelling in a single direction at a fixed speed and rate of fire."""
+
+	def __init__(self, position, rof, number, speed, direction):
+		Attack.__init__(self, position, rof)
+		self.number = number
+		self.speed = speed
+		self.direction = direction
+		self.pattern = list()
+
+		for i in range (number):
+			self.pattern.append(Bullet(position, speed, direction))
+
+	def fire():
+		pass
