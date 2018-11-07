@@ -12,7 +12,7 @@ class Player(Unit):
 		Unit.__init__(self, position)
 		self.speed = speed
 		self.image = Image(position, "player_ship_50.gif")
-		self.radius = 25
+		self.radius = 20
 		self.lives = 3
 
 	def move(self, key):
@@ -98,23 +98,41 @@ class Attack():
 
 	"""Generic base class for all enemy attack patterns. Attacks spawn from a given location and consist of projectile objects."""
 
-	def __init__(self, position, rof):
+	def __init__(self, position, rate):
 		self.position = position
+		self.rate = rate
 
 
-class Straight(Attack):
+class LineAttack(Attack):
 
 	"""Straight attacks consist of a number of bullets travelling in a single direction at a fixed speed and rate of fire."""
 
-	def __init__(self, position, rof, number, speed, direction):
-		Attack.__init__(self, position, rof)
+	def __init__(self, position, rate, number, speed, direction):
+		Attack.__init__(self, position, rate)
 		self.number = number
 		self.speed = speed
 		self.direction = direction
-		self.pattern = list()
+		self.list = list()
+		self.frame = 0
+		self.bullet = 0
 
 		for i in range (number):
-			self.pattern.append(Bullet(position, speed, direction))
+			self.list.append(Bullet(position, speed, direction))
 
-	def fire():
-		pass
+	def fire(self, window):
+		if (self.bullet == self.number):
+			pass
+		elif (self.frame % self.rate == 0):
+			self.list[self.bullet].draw(window)
+			self.bullet = self.bullet + 1
+
+	def move(self):
+		for i in range (self.bullet):
+			self.list[i].move()
+
+		self.frame = self.frame + 1
+
+	def detect_hit(self, player):
+		for i in range (self.bullet):
+			if (self.list[i].detect_hit(player)):
+				return True
