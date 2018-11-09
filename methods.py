@@ -37,6 +37,8 @@ class Player(Unit):
 			self.image.move(d, 0)
 			self.position = Point(x + d, y)
 
+		return
+
 
 class Mob(Unit):
 	def __init__(self, speed):
@@ -66,6 +68,8 @@ class Bullet(Projectile):
 	def draw(self, window):
 		self.image.draw(window)
 
+		return
+
 	def move(self):
 		# Moves image and updates position value.
 		px = self.position.getX()
@@ -75,6 +79,8 @@ class Bullet(Projectile):
 
 		self.image.move(dx, dy)
 		self.position = Point(px + dx, py + dy)
+
+		return
 
 	def detect_hit(self, player):
 		# Returns whether the object body has entered given player.
@@ -126,13 +132,19 @@ class LineAttack(Attack):
 			self.list[self.bullet].draw(window)
 			self.bullet = self.bullet + 1
 
+		return
+
 	def move(self):
 		for i in range (self.bullet):
 			self.list[i].move()
 
 		self.frame = self.frame + 1
 
+		return
+
 	def detect_hit(self, player):
 		for i in range (self.bullet):
 			if (self.list[i].detect_hit(player)):
 				return True
+
+		return False
