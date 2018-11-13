@@ -23,7 +23,6 @@ def main():
 	attack4 = engine.LineAttack(graphics.Point(220,-50), 45, 100, 7, graphics.Point(-.1,1))
 	attack5 = engine.LineAttack(graphics.Point(220,-50), 53, 100, 8, graphics.Point(0,1))
 
-
 	x = True
 	while (x):
 		# Game loop starts here.
@@ -56,5 +55,6 @@ def main():
 		player.move(window.checkKey())
 
 		graphics.update(30)
+		# loop ends here
 
 main()
