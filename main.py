@@ -10,18 +10,23 @@ def main():
 	player_spawn = graphics.Point(winX / 2, winY * (2/3))
 
 	window = graphics.GraphWin(winName, winX, winY, autoflush=False)
+	startMenu = engine.StartMenu()
 
 	wallpaper = graphics.Image(winCenter, "assets/space.gif")
 	wallpaper.draw(window)
 
+	startMenu.draw(window)
+	window.getMouse()
+	startMenu.undraw()
+
 	player = engine.Player(player_spawn, player_speed)
 	player.image.draw(window)
 
-	attack1 = engine.LineAttack(graphics.Point(220,-50), 25, 100, 3, graphics.Point(.3,1))
-	attack2 = engine.LineAttack(graphics.Point(220,-50), 25, 100, 3, graphics.Point(-.3,1))
-	attack3 = engine.LineAttack(graphics.Point(220,-50), 30, 100, 7, graphics.Point(.1,1))
-	attack4 = engine.LineAttack(graphics.Point(220,-50), 45, 100, 7, graphics.Point(-.1,1))
-	attack5 = engine.LineAttack(graphics.Point(220,-50), 53, 100, 8, graphics.Point(0,1))
+	attack1 = engine.Line(graphics.Point(220,-50), 25, 3, 100, graphics.Point(.3,1))
+	attack2 = engine.Line(graphics.Point(220,-50), 25, 6, 100, graphics.Point(-.3,1))
+	attack3 = engine.Line(graphics.Point(220,-50), 30, 7, 100, graphics.Point(.1,1))
+	attack4 = engine.Line(graphics.Point(220,-50), 45, 3, 100, graphics.Point(-.1,1))
+	attack5 = engine.Line(graphics.Point(220,-50), 53, 5, 100, graphics.Point(0,1))
 
 	x = True
 	while (x):

@@ -40,11 +40,6 @@ class Player(Unit):
 		return
 
 
-class Mob(Unit):
-	def __init__(self, speed):
-		Unit.__init(self, speed)
-
-
 class Projectile():
 
 	"""Generic base class for all enemy attack components."""
@@ -100,23 +95,23 @@ class Bullet(Projectile):
 		return False
 
 
-class Attack():
+class Pattern():
 
 	"""Generic base class for all enemy attack patterns. Attacks spawn from a given location and consist of projectile objects."""
 
-	def __init__(self, position, rate):
+	def __init__(self, position, rof, speed):
 		self.position = position
-		self.rate = rate
-
-
-class LineAttack(Attack):
-
-	"""Straight attacks consist of a number of bullets travelling in a single direction at a fixed speed and rate of fire."""
-
-	def __init__(self, position, rate, number, speed, direction):
-		Attack.__init__(self, position, rate)
-		self.number = number
+		self.rof = rof
 		self.speed = speed
+
+
+class Line(Pattern):
+
+	"""Straight attacks consist of a number of bullets travelling in a single direction at a fixed speed and rof of fire."""
+
+	def __init__(self, position, rof, speed, number, direction):
+		Pattern.__init__(self, position, rof, speed)
+		self.number = number
 		self.direction = direction
 		self.list = list()
 		self.frame = 0
@@ -128,7 +123,7 @@ class LineAttack(Attack):
 	def fire(self, window):
 		if (self.bullet == self.number):
 			pass
-		elif (self.frame % self.rate == 0):
+		elif (self.frame % self.rof == 0):
 			self.list[self.bullet].draw(window)
 			self.bullet = self.bullet + 1
 
@@ -148,3 +143,55 @@ class LineAttack(Attack):
 				return True
 
 		return False
+
+class Step(Pattern):
+	def __init__(self, position, rof, speed, number):
+		Pattern.__init__(self, position, rof, speed)
+		self.number = number
+		self.list = list()
+		self.frame = 0
+		self.bullet = 0
+		self.step = 0
+
+		for i in range (number):
+			self.list.append(Bullet(position, speed, direction))
+			self.step = self.step + 20
+	pass
+
+
+#class NewGameButton():
+
+#	""" Buttons are centered to an anchor. Switches: new"""
+
+#	def __init__(self, anchor):
+#		self.anchor = anchor
+#		self.panel = Image(anchor)
+#		pass
+
+
+
+
+
+class StartMenu():
+	def __init__(self):
+		self.namePlate = Image(Point(220, 180), "assets/nameplate01.gif")
+		self.startButton = Image(Point(220, 380), "assets/menubutton01.gif")
+		self.startLabel = Image(Point(220, 380), "assets/newgametext2.gif")
+		self.scoreButton = Image(Point(220, 430), "assets/menubutton01.gif")
+		self.exitButton = Image(Point(220, 480), "assets/menubutton01.gif")
+
+	def draw(self, window):
+		self.namePlate.draw(window)
+		self.startButton.draw(window)
+		self.startLabel.draw(window)
+		self.scoreButton.draw(window)
+		self.exitButton.draw(window)
+		return
+
+	def undraw(self):
+		self.namePlate.undraw()
+		self.startButton.undraw()
+		self.startLabel.undraw()
+		self.scoreButton.undraw()
+		self.exitButton.undraw()
+		return
