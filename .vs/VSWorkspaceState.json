@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\assets"
   ],
-  "SelectedNode": "\\engine.py",
+  "SelectedNode": "\\main.py",
   "PreviewInSolutionExplorer": false
 }

@@ -159,33 +159,24 @@ class Step(Pattern):
 	pass
 
 
-#class NewGameButton():
-
-#	""" Buttons are centered to an anchor. Switches: new"""
-
-#	def __init__(self, anchor):
-#		self.anchor = anchor
-#		self.panel = Image(anchor)
-#		pass
-
-
-
-
-
 class StartMenu():
 	def __init__(self):
 		self.namePlate = Image(Point(220, 180), "assets/nameplate01.gif")
 		self.startButton = Image(Point(220, 380), "assets/menubutton01.gif")
-		self.startLabel = Image(Point(220, 380), "assets/newgametext2.gif")
+		self.startLabel = Image(Point(220, 380), "assets/newgametext01.gif")
 		self.scoreButton = Image(Point(220, 430), "assets/menubutton01.gif")
+		self.scoreLabel = Image(Point(220, 430), "assets/highscorestext01.gif")
 		self.exitButton = Image(Point(220, 480), "assets/menubutton01.gif")
+		self.exitLabel = Image(Point(220, 480), "assets/exittext01.gif")
 
 	def draw(self, window):
 		self.namePlate.draw(window)
 		self.startButton.draw(window)
 		self.startLabel.draw(window)
 		self.scoreButton.draw(window)
+		self.scoreLabel.draw(window)
 		self.exitButton.draw(window)
+		self.exitLabel.draw(window)
 		return
 
 	def undraw(self):
@@ -193,5 +184,18 @@ class StartMenu():
 		self.startButton.undraw()
 		self.startLabel.undraw()
 		self.scoreButton.undraw()
+		self.scoreLabel.undraw()
 		self.exitButton.undraw()
+		self.exitLabel.undraw()
 		return
+
+	def press_start(self, window):
+		winX = 440
+		winY = 660
+		click = window.checkMouse()
+		clickX = click.getX()
+		clickY = click.getY()
+
+		if (160 < clickX < 280):
+			if (360 < clickY < 400):
+				pass
