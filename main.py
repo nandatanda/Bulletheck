@@ -10,14 +10,12 @@ def main():
 	player_spawn = graphics.Point(winX / 2, winY * (2/3))
 
 	window = graphics.GraphWin(winName, winX, winY, autoflush=False)
-	startMenu = engine.StartMenu()
+	menu = engine.Menu()
 
 	wallpaper = graphics.Image(winCenter, "assets/space.gif")
 	wallpaper.draw(window)
 
-	startMenu.draw(window)
-	window.getMouse()
-	startMenu.undraw()
+	selection = menu.run(window, window.checkMouse())
 
 	player = engine.Player(player_spawn, player_speed)
 	player.image.draw(window)

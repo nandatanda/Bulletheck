@@ -11,7 +11,7 @@ class Player(Unit):
 	def __init__(self, position, speed):
 		Unit.__init__(self, position)
 		self.speed = speed
-		self.image = Image(position, "assets/player_ship_50.gif")
+		self.image = Image(position, "assets/ship_55x55.gif")
 		self.radius = 20
 		self.lives = 3
 
@@ -159,17 +159,21 @@ class Step(Pattern):
 	pass
 
 
-class StartMenu():
+class Menu():
 	def __init__(self):
-		self.namePlate = Image(Point(220, 180), "assets/nameplate01.gif")
-		self.startButton = Image(Point(220, 380), "assets/menubutton01.gif")
+		self.logo = Image(Point(220, 160), "assets/logo_120x120.gif")
+		self.namePlate = Image(Point(220, 160), "assets/nameplate01.gif")
+		self.startButton = Image(Point(220, 380), "assets/box_120x40.gif")
 		self.startLabel = Image(Point(220, 380), "assets/newgametext01.gif")
-		self.scoreButton = Image(Point(220, 430), "assets/menubutton01.gif")
+		self.scoreButton = Image(Point(220, 430), "assets/box_120x40.gif")
 		self.scoreLabel = Image(Point(220, 430), "assets/highscorestext01.gif")
-		self.exitButton = Image(Point(220, 480), "assets/menubutton01.gif")
+		self.scorePlate = Image(Point(220, 430), "assets/box_400x300.gif")
+		self.exitButton = Image(Point(220, 480), "assets/box_120x40.gif")
 		self.exitLabel = Image(Point(220, 480), "assets/exittext01.gif")
+		self.isOpen = False
 
 	def draw(self, window):
+		self.logo.draw(window)
 		self.namePlate.draw(window)
 		self.startButton.draw(window)
 		self.startLabel.draw(window)
@@ -177,9 +181,11 @@ class StartMenu():
 		self.scoreLabel.draw(window)
 		self.exitButton.draw(window)
 		self.exitLabel.draw(window)
+		self.isOpen = True
 		return
 
 	def undraw(self):
+		self.logo.undraw()
 		self.namePlate.undraw()
 		self.startButton.undraw()
 		self.startLabel.undraw()
@@ -187,15 +193,64 @@ class StartMenu():
 		self.scoreLabel.undraw()
 		self.exitButton.undraw()
 		self.exitLabel.undraw()
+		self.isOpen = False
 		return
 
-	def press_start(self, window):
-		winX = 440
-		winY = 660
-		click = window.checkMouse()
+	def check_start(self, click):
 		clickX = click.getX()
 		clickY = click.getY()
 
 		if (160 < clickX < 280):
 			if (360 < clickY < 400):
-				pass
+				return True
+		return False
+
+	def check_scores(self, click):
+		clickX = click.getX()
+		clickY = click.getY()
+
+		if (160 < clickX < 280):
+			if (410 < clickY < 450):
+				return True
+		return False
+
+	def check_exit(self, click):
+		clickX = click.getX()
+		clickY = click.getY()
+
+		if (160 < clickX < 280):
+			if (460 < clickY < 500):
+				return True
+		return False
+
+	def run(self, window, click):
+		self.draw(window)
+
+		while (self.isOpen):
+			click = window.checkMouse()
+
+			if (click):
+				if (self.check_start(click)):
+					self.undraw()
+					return
+				elif (self.check_scores(click)):
+					self.undraw()
+					self.show_scores(window)
+					self.draw(window)
+				elif (self.check_exit(click)):
+					self.undraw()
+					quit()
+
+	def show_scores(self, window):
+		self.logo.draw(window)
+		self.namePlate.draw(window)
+		self.scorePlate.draw(window)
+
+		window.getMouse()
+
+		self.logo.undraw()
+		self.scorePlate.undraw()
+		self.namePlate.undraw()
+
+		return
+
