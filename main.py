@@ -15,7 +15,7 @@ def main():
 	wallpaper = graphics.Image(winCenter, "assets/space.gif")
 	wallpaper.draw(window)
 
-	selection = menu.run(window, window.checkMouse())
+	menu.run(window)
 
 	player = engine.Player(player_spawn, player_speed)
 	player.image.draw(window)

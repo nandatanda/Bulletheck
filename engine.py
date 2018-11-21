@@ -223,7 +223,22 @@ class Menu():
 				return True
 		return False
 
-	def run(self, window, click):
+	def show_scores(self, window):
+		self.file = File("scores.txt")
+		self.scores = self.file.list()
+		self.logo.draw(window)
+		self.namePlate.draw(window)
+		self.scorePlate.draw(window)
+
+		window.getMouse()
+
+		self.logo.undraw()
+		self.scorePlate.undraw()
+		self.namePlate.undraw()
+
+		return
+
+	def run(self, window):
 		self.draw(window)
 
 		while (self.isOpen):
@@ -240,17 +255,22 @@ class Menu():
 				elif (self.check_exit(click)):
 					self.undraw()
 					quit()
-
-	def show_scores(self, window):
-		self.logo.draw(window)
-		self.namePlate.draw(window)
-		self.scorePlate.draw(window)
-
-		window.getMouse()
-
-		self.logo.undraw()
-		self.scorePlate.undraw()
-		self.namePlate.undraw()
-
 		return
 
+class File():
+	def __init__(self, source):
+		self.source = source
+
+	def list(self):
+		with open(self.source) as f:
+			self.mylist = f.read().splitlines()
+
+		for i in range (len(self.mylist)):
+			self.mylist[i] = self.mylist[i].split(",")
+
+		self.mylist.sort(reverse = True)
+
+		return self.mylist
+
+	def add(self, score, name):
+		pass
