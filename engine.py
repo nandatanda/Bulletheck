@@ -225,16 +225,29 @@ class Menu():
 
 	def show_scores(self, window):
 		self.file = File("scores.txt")
-		self.scores = self.file.list()
+		self.listScore = self.file.get_scores()
+		self.listName = self.file.get_names()
+		self.listText = list()
+		self.anchor = Point(60,370)
+
 		self.logo.draw(window)
 		self.namePlate.draw(window)
 		self.scorePlate.draw(window)
+
+		for i in range (5): 
+			self.listText.append(Text(self.anchor, self.listScore[i]))
+			self.listText[i].setFill("white")
+			self.anchor.move(0, 40)
+			self.listText[i].draw(window)
 
 		window.getMouse()
 
 		self.logo.undraw()
 		self.scorePlate.undraw()
 		self.namePlate.undraw()
+
+		for i in range (5):
+			self.listText[i].undraw()
 
 		return
 
@@ -257,20 +270,44 @@ class Menu():
 					quit()
 		return
 
+
 class File():
 	def __init__(self, source):
 		self.source = source
 
-	def list(self):
+	def get_entries(self):
 		with open(self.source) as f:
 			self.mylist = f.read().splitlines()
-
-		for i in range (len(self.mylist)):
-			self.mylist[i] = self.mylist[i].split(",")
 
 		self.mylist.sort(reverse = True)
 
 		return self.mylist
 
-	def add(self, score, name):
-		pass
+	def get_scores(self):
+		with open(self.source) as f:
+			self.mylist = f.read().splitlines()
+
+		self.mylist.sort(reverse = True)
+
+		for i in range (len(self.mylist)):
+			self.mylist[i] = self.mylist[i].split(',')[0]
+
+		return self.mylist
+
+	def get_names(self):
+		with open(self.source) as f:
+			self.mylist = f.read().splitlines()
+
+		self.mylist.sort(reverse = True)
+
+		for i in range (len(self.mylist)):
+			self.mylist[i] = self.mylist[i].split(',')[1]
+			self.mylist[i] = self.mylist[i].strip()
+
+		return self.mylist
+
+	def add_entry(self, score, name):
+		with open(self.source, 'a+') as f:
+			f.write('\n' + str(score) + ',' + name)
+
+		return

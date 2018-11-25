@@ -4,5 +4,5 @@
 550,Alex Jones
 150,Barack Obama
 400,Isaac Newton
-873,Thorax the Impaler
-990,The Guy
+999,Spaghetti Man
+999,Spaghetti Man
