@@ -162,7 +162,7 @@ class Step(Pattern):
 class Menu():
 	def __init__(self):
 		self.logo = Image(Point(220, 160), "assets/logo_120x120.gif")
-		self.namePlate = Image(Point(220, 160), "assets/nameplate01.gif")
+		self.namePlate = Image(Point(220, 160), "assets/name_180_x_60.gif")
 		self.startButton = Image(Point(220, 380), "assets/box_120x40.gif")
 		self.startLabel = Image(Point(220, 380), "assets/newgametext01.gif")
 		self.scoreButton = Image(Point(220, 430), "assets/box_120x40.gif")
@@ -227,27 +227,37 @@ class Menu():
 		self.file = File("scores.txt")
 		self.listScore = self.file.get_scores()
 		self.listName = self.file.get_names()
-		self.listText = list()
-		self.anchor = Point(60,370)
+		self.count = 5
+
+		self.anchorScore = Point(60,350)
+		self.anchorName = Point(220,350)
+		self.textScore = list()
+		self.textName = list()
 
 		self.logo.draw(window)
 		self.namePlate.draw(window)
 		self.scorePlate.draw(window)
 
-		for i in range (5): 
-			self.listText.append(Text(self.anchor, self.listScore[i]))
-			self.listText[i].setFill("white")
-			self.anchor.move(0, 40)
-			self.listText[i].draw(window)
+		for i in range (self.count): 
+			self.textScore.append(Text(self.anchorScore, self.listScore[i]))
+			self.textScore[i].setFill("white")
+			self.anchorScore.move(0, 40)
+			self.textScore[i].draw(window)
+
+			self.textName.append(Text(self.anchorName, self.listName[i]))
+			self.textName[i].setFill("white")
+			self.anchorName.move(0, 40)
+			self.textName[i].draw(window)
 
 		window.getMouse()
+
+		for i in range (self.count):
+			self.textScore[i].undraw()
+			self.textName[i].undraw()
 
 		self.logo.undraw()
 		self.scorePlate.undraw()
 		self.namePlate.undraw()
-
-		for i in range (5):
-			self.listText[i].undraw()
 
 		return
 
