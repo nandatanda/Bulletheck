@@ -6,11 +6,14 @@ def main():
 	winY = 660
 	winCenter = graphics.Point(winX / 2, winY / 2)
 	winName = "| bullet.heck |"
+
 	playerSpeed = 20
 	playerSpawn = graphics.Point(winX / 2, winY * (2/3))
 	playerIsHit = False
+	score = 0
 
 	menu = engine.Menu()
+	hud = engine.Hud()
 	player = engine.Player(playerSpawn, playerSpeed)
 	window = graphics.GraphWin(winName, winX, winY, autoflush=False)
 	wallpaper = graphics.Image(winCenter, "assets/space.gif")
@@ -18,6 +21,8 @@ def main():
 	wallpaper.draw(window)
 	menu.run(window)
 	player.image.draw(window)
+
+	hud.draw(window)
 
 	attack1 = engine.Line(graphics.Point(220,-50), 25, 3, 100, graphics.Point(.3,1))
 	attack2 = engine.Line(graphics.Point(220,-50), 25, 6, 100, graphics.Point(-.3,1))
@@ -58,6 +63,10 @@ def main():
 			player.hit = True
 
 		player.lose_life(window)
+		score = score + 1
+
+		hud.update_bar(window, player)
+		hud.update_score(window, score)
 
 		graphics.update(30)
 

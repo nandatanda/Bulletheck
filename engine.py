@@ -55,15 +55,18 @@ class Player(Unit):
 		if (self.frames == 0):
 			if (self.hit):
 				self.lives = self.lives - 1
+
 				if (self.lives == 0):
 					print("GAME OVER!")
 					input()
+
 				self.frames = self.frames + 1
 				self.shield.draw(window)
 				print("Player has", self.lives, "lives remaining.")
 
 		elif(0 < self.frames < self.max):
 			self.frames = self.frames + 1
+
 		elif (self.frames == self.max):
 			self.frames = 0
 			self.shield.undraw()
@@ -309,6 +312,41 @@ class Menu():
 				elif (self.check_exit(click)):
 					self.undraw()
 					quit()
+		return
+
+class Hud():
+	def __init__(self):
+		self.bar = Image(Point(360, 25), "assets/shield/bar_sized_01.gif")
+		self.score = Text(Point(40, 25), 0)
+
+		self.score.setTextColor("white")
+
+
+	def draw(self, window):
+		self.bar.draw(window)
+		self.score.draw(window)
+
+	def update_bar(self, window, player):
+		if (player.lives < 4):
+			self.bar.undraw()
+
+			if (player.lives == 3):
+				self.bar = Image(Point(360, 25), "assets/shield/bar_sized_02.gif")
+			if (player.lives == 2):
+				self.bar = Image(Point(360, 25), "assets/shield/bar_sized_03.gif")
+			if (player.lives == 1):
+				self.bar = Image(Point(360, 25), "assets/shield/bar_sized_04.gif")
+
+			self.bar.draw(window)
+
+			return
+
+	def update_score(self, window, score):
+		self.score.undraw()
+		self.score = Text(Point(40, 25), score)
+		self.score.setTextColor("white")
+		self.score.draw(window)
+
 		return
 
 
