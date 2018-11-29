@@ -11,9 +11,15 @@ class Player(Unit):
 	def __init__(self, position, speed):
 		Unit.__init__(self, position)
 		self.speed = speed
-		self.image = Image(position, "assets/ship_55x55.gif")
+		self.image = Image(position, "assets/ship_50x50.gif")
+		self.hit = False
 		self.radius = 20
-		self.lives = 3
+		self.lives = 4
+		self.frames = 0
+
+
+		self.shield = Circle(self.position, self.radius + 10)
+		self.shield.setOutline("red")
 
 	def move(self, key):
 		# Moves player image based on keypress & updates position value.
@@ -23,19 +29,44 @@ class Player(Unit):
 
 		if ((key == "W" or key == "w") and y > 0):
 			self.image.move(0, -d)
+			self.shield.move(0, -d)
 			self.position = Point(x, y - d)
 
 		elif ((key == "S" or key == "s") and y < 660):
 			self.image.move(0, d)
+			self.shield.move(0, d)
 			self.position = Point(x, y + d)
 
 		elif ((key == "A" or key == "a") and x > 0):
 			self.image.move(-d, 0)
+			self.shield.move(-d, 0)
 			self.position = Point(x - d, y)
 
 		elif ((key == "D" or key == "d") and x < 440):
 			self.image.move(d, 0)
+			self.shield.move(d, 0)
 			self.position = Point(x + d, y)
+
+		return
+
+	def lose_life(self, window):
+		self.max = 45
+
+		if (self.frames == 0):
+			if (self.hit):
+				self.lives = self.lives - 1
+				if (self.lives == 0):
+					print("GAME OVER!")
+					input()
+				self.frames = self.frames + 1
+				self.shield.draw(window)
+				print("Player has", self.lives, "lives remaining.")
+
+		elif(0 < self.frames < self.max):
+			self.frames = self.frames + 1
+		elif (self.frames == self.max):
+			self.frames = 0
+			self.shield.undraw()
 
 		return
 

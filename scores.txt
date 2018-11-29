@@ -5,4 +5,4 @@
 150,Barack Obama
 400,Isaac Newton
 873,Thorax the Impaler
-990,The Guy
+110,The Guy
