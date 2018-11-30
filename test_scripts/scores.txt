@@ -1,8 +1,0 @@
-100,Jane Doe
-300,Zackaria Elayni
-200,Calipha Allen
-550,Alex Jones
-150,Barack Obama
-400,Isaac Newton
-999,Spaghetti Man
-999,Spaghetti Man

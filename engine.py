@@ -1,28 +1,23 @@
 from graphics import *
 
-class Unit():
-
-	def __init__(self, position):
-		self.position = position
-
-
-class Player(Unit):
+class Player():
 
 	def __init__(self, position, speed):
-		Unit.__init__(self, position)
+		self.position = position
 		self.speed = speed
 		self.image = Image(position, "assets/ship_50x50.gif")
 		self.hit = False
 		self.radius = 20
 		self.lives = 4
-		self.frames = 0
-
+		self.hitframes = 0
+		self.shieldtime = 45
+		self.score = 0
 
 		self.shield = Circle(self.position, self.radius + 10)
 		self.shield.setOutline("red")
 
 	def move(self, key):
-		# Moves player image based on keypress & updates position value.
+		# Moves player image and shield based on keypress & updates position value.
 		d = self.speed
 		x = self.position.getX()
 		y = self.position.getY()
@@ -49,53 +44,59 @@ class Player(Unit):
 
 		return
 
-	def lose_life(self, window):
-		self.max = 45
-
-		if (self.frames == 0):
+	def update_hitframes(self):
+		if (self.hitframes == 0):
 			if (self.hit):
-				self.lives = self.lives - 1
+				self.hitframes = self.hitframes + 1
 
-				if (self.lives == 0):
-					print("GAME OVER!")
-					input()
+		elif (0 < self.hitframes < self.shieldtime):
+			self.hitframes = self.hitframes + 1
 
-				self.frames = self.frames + 1
+		elif (self.hitframes == self.shieldtime):
+			self.hitframes = 0
+
+		return
+
+	def update_lives(self):
+		if (self.hitframes == 1):
+			self.lives = self.lives - 1
+
+		elif (self.score % 500 == 0):
+			if (self.lives < 4):
+				self.lives = self.lives + 1
+
+			return
+
+	def update_shield(self, window):
+		if (self.hitframes == 1):
+			if(self.lives > 0):
 				self.shield.draw(window)
-				print("Player has", self.lives, "lives remaining.")
 
-		elif(0 < self.frames < self.max):
-			self.frames = self.frames + 1
-
-		elif (self.frames == self.max):
-			self.frames = 0
+		if (self.hitframes == 45):
 			self.shield.undraw()
 
 		return
 
 
-class Projectile():
+class Bullet():
 
-	"""Generic base class for all enemy attack components."""
+	"""A bullet is a basic circular projectile with a given position, speed, and direction."""
 
 	def __init__(self, position, speed, direction):
 		self.position = position
 		self.speed = speed
 		self.direction = direction
-
-
-class Bullet(Projectile):
-
-	"""A bullet is a basic circular projectile with a given position, speed, and direction."""
-
-	def __init__(self, position, speed, direction):
-		Projectile.__init__(self, position, speed, direction)
 		self.radius = 5
 		self.image = Circle(position, self.radius)
 		self.image.setFill("white")
 
 	def draw(self, window):
 		self.image.draw(window)
+
+		return
+
+	def undraw(self):
+		self.image.undraw()
 
 		return
 
@@ -171,6 +172,12 @@ class Line(Pattern):
 
 		return
 
+	def undraw(self):
+		for i in range (self.bullet):
+			self.list[i].undraw()
+
+		return
+
 	def detect_hit(self, player):
 		for i in range (self.bullet):
 			if (self.list[i].detect_hit(player)):
@@ -201,6 +208,8 @@ class Menu():
 		self.startLabel = Image(Point(220, 380), "assets/newgametext01.gif")
 		self.scoreButton = Image(Point(220, 430), "assets/box_120x40.gif")
 		self.scoreLabel = Image(Point(220, 430), "assets/highscorestext01.gif")
+		
+		
 		self.scorePlate = Image(Point(220, 430), "assets/box_400x300.gif")
 		self.exitButton = Image(Point(220, 480), "assets/box_120x40.gif")
 		self.exitLabel = Image(Point(220, 480), "assets/exittext01.gif")
@@ -312,12 +321,15 @@ class Menu():
 				elif (self.check_exit(click)):
 					self.undraw()
 					quit()
+
 		return
 
 class Hud():
 	def __init__(self):
 		self.bar = Image(Point(360, 25), "assets/shield/bar_sized_01.gif")
 		self.score = Text(Point(40, 25), 0)
+		self.gameOverText = Image(Point(220, 330), "assets/gameover_sized.gif")
+		self.menuButton = Image(Point(220,430), "assets/box_120x40.gif")
 
 		self.score.setTextColor("white")
 
@@ -327,25 +339,48 @@ class Hud():
 		self.score.draw(window)
 
 	def update_bar(self, window, player):
-		if (player.lives < 4):
-			self.bar.undraw()
+		self.bar.undraw()
 
-			if (player.lives == 3):
-				self.bar = Image(Point(360, 25), "assets/shield/bar_sized_02.gif")
-			if (player.lives == 2):
-				self.bar = Image(Point(360, 25), "assets/shield/bar_sized_03.gif")
-			if (player.lives == 1):
-				self.bar = Image(Point(360, 25), "assets/shield/bar_sized_04.gif")
+		if (player.lives == 4):
+			self.bar = Image(Point(360, 25), "assets/shield/bar_sized_01.gif")
+		if (player.lives == 3):
+			self.bar = Image(Point(360, 25), "assets/shield/bar_sized_02.gif")
+		if (player.lives == 2):
+			self.bar = Image(Point(360, 25), "assets/shield/bar_sized_03.gif")
+		if (player.lives == 1):
+			self.bar = Image(Point(360, 25), "assets/shield/bar_sized_04.gif")
 
-			self.bar.draw(window)
+		self.bar.draw(window)
 
-			return
+		return
 
 	def update_score(self, window, score):
 		self.score.undraw()
 		self.score = Text(Point(40, 25), score)
 		self.score.setTextColor("white")
 		self.score.draw(window)
+
+		return
+
+	def game_over(self, window):
+		self.waiting = True
+
+		self.score.undraw()
+		self.bar.undraw()
+
+		self.gameOverText.draw(window)
+		self.menuButton.draw(window)
+
+		while (self.waiting):
+			self.click = window.getMouse()
+			self.clickX = self.click.getX()
+			self.clickY = self.click.getY()
+
+			if (160 < self.clickX < 280):
+				if (410 < self.clickY < 450):
+					self.gameOverText.undraw()
+					self.menuButton.undraw()
+					self.waiting = False
 
 		return
 
