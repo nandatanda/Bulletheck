@@ -19,14 +19,14 @@ def main():
 	wallpaper.draw(window)
 
 	while (window):
-		menu.run(window)
+		menu.main(window)
 
 		player.score = 0
 		player.lives = 4
 
 		player = engine.Player(playerSpawn, playerSpeed)
 
-		player.image.draw(window)
+		player.draw(window)
 		hud.draw(window)
 
 		hud.update_bar(window, player)
@@ -84,8 +84,12 @@ def main():
 				attack3.undraw()
 				attack4.undraw()
 				attack5.undraw()
-				hud.game_over(window)
-				player.image.undraw()
+
+				player.undraw()
+
+				hud.undraw(window)
+
+				menu.game_over(window, player.score)
 
 			graphics.update(30)
 

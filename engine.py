@@ -16,6 +16,16 @@ class Player():
 		self.shield = Circle(self.position, self.radius + 10)
 		self.shield.setOutline("red")
 
+	def draw(self, window):
+		self.image.draw(window)
+
+		return
+
+	def undraw(self):
+		self.image.undraw()
+
+		return
+
 	def move(self, key):
 		# Moves player image and shield based on keypress & updates position value.
 		d = self.speed
@@ -204,18 +214,22 @@ class Menu():
 	def __init__(self):
 		self.logo = Image(Point(220, 160), "assets/logo_120x120.gif")
 		self.namePlate = Image(Point(220, 160), "assets/name_180_x_60.gif")
+
 		self.startButton = Image(Point(220, 380), "assets/box_120x40.gif")
 		self.startLabel = Image(Point(220, 380), "assets/newgametext01.gif")
+
 		self.scoreButton = Image(Point(220, 430), "assets/box_120x40.gif")
 		self.scoreLabel = Image(Point(220, 430), "assets/highscorestext01.gif")
-		
-		
 		self.scorePlate = Image(Point(220, 430), "assets/box_400x300.gif")
+		self.scoreTitle = Text(Point(220, 310), "[TOP 5]")
+		self.scoreTitle.setFill("red")
+
 		self.exitButton = Image(Point(220, 480), "assets/box_120x40.gif")
 		self.exitLabel = Image(Point(220, 480), "assets/exittext01.gif")
+
 		self.isOpen = False
 
-	def draw(self, window):
+	def draw_main(self, window):
 		self.logo.draw(window)
 		self.namePlate.draw(window)
 		self.startButton.draw(window)
@@ -225,9 +239,10 @@ class Menu():
 		self.exitButton.draw(window)
 		self.exitLabel.draw(window)
 		self.isOpen = True
+
 		return
 
-	def undraw(self):
+	def undraw_main(self):
 		self.logo.undraw()
 		self.namePlate.undraw()
 		self.startButton.undraw()
@@ -237,6 +252,7 @@ class Menu():
 		self.exitButton.undraw()
 		self.exitLabel.undraw()
 		self.isOpen = False
+
 		return
 
 	def check_start(self, click):
@@ -266,20 +282,28 @@ class Menu():
 				return True
 		return False
 
-	def show_scores(self, window):
+	def check_x(self, click, adjustment):
+		clickX = click.getX()
+		clickY = click.getY()
+
+		if (347.5 < clickX < 372.5):
+			if (347.5 - adjustment < clickY < 372.5 + adjustment):
+				return True
+		return False
+
+	def draw_scores(self, window):
 		self.file = File("scores.txt")
 		self.listScore = self.file.get_scores()
 		self.listName = self.file.get_names()
 		self.count = 5
 
-		self.anchorScore = Point(60,350)
-		self.anchorName = Point(220,350)
+		self.anchorScore = Point(60,360)
+		self.anchorName = Point(220,360)
 		self.textScore = list()
 		self.textName = list()
 
-		self.logo.draw(window)
-		self.namePlate.draw(window)
 		self.scorePlate.draw(window)
+		self.scoreTitle.draw(window)
 
 		for i in range (self.count): 
 			self.textScore.append(Text(self.anchorScore, self.listScore[i]))
@@ -292,37 +316,118 @@ class Menu():
 			self.anchorName.move(0, 40)
 			self.textName[i].draw(window)
 
-		window.getMouse()
+		return
 
+	def undraw_scores(self):
 		for i in range (self.count):
 			self.textScore[i].undraw()
 			self.textName[i].undraw()
 
 		self.logo.undraw()
-		self.scorePlate.undraw()
 		self.namePlate.undraw()
+		self.scorePlate.undraw()
+		self.scoreTitle.undraw()
 
 		return
 
-	def run(self, window):
-		self.draw(window)
+	def main(self, window):
+		self.draw_main(window)
 
 		while (self.isOpen):
 			click = window.checkMouse()
 
 			if (click):
 				if (self.check_start(click)):
-					self.undraw()
+					self.undraw_main()
 					return
+
 				elif (self.check_scores(click)):
-					self.undraw()
-					self.show_scores(window)
-					self.draw(window)
+					self.undraw_main()
+					self.logo.draw(window)
+					self.namePlate.draw(window)
+					self.draw_scores(window)
+
+					window.getMouse()
+
+					self.undraw_scores()
+					self.draw_main(window)
+
 				elif (self.check_exit(click)):
-					self.undraw()
+					self.undraw_main()
 					quit()
 
 		return
+
+	def new_score(self, window, score, rank):
+			self.isOpen = True
+			self.adjustment = 40 * self.rank
+
+			self.newScorePosition = Point(60, 360 + self.adjustment)
+			self.scoreTitle = Text(Point(220, 310), "[NEW HIGH SCORE]")
+			self.scoreTitle.setFill("red")
+
+			self.newNamePosition = Point(220, 360 + self.adjustment)
+			self.nameEntry = Entry(self.newNamePosition, 20)
+			self.nameEntry.setFill("black")
+			self.nameEntry.setTextColor("white")
+			self.nameEntry.setText("Enter name and hit 'return'")
+
+			self.nameButton = Image(Point(360, 360 + self.adjustment), "assets/buttons/x_25x25.gif")
+
+			self.draw_scores(window)
+			self.nameEntry.draw(window)
+			self.nameButton.draw(window)
+
+			self.textName[self.rank].undraw()
+			self.textScore[self.rank].undraw()
+			self.textScore[self.rank] = Text(self.newScorePosition, score)
+			self.textScore[self.rank].setFill("white")
+			self.textScore[self.rank].draw(window)
+
+			while(self.isOpen):
+				click = window.checkMouse()
+				press = window.checkKey()
+
+				if (click):
+					if (self.check_x(click, self.adjustment)):
+						self.nameEntry.setText("")
+
+				if (press == "Return"):
+					name = self.nameEntry.getText()
+					self.file.add_entry(score, name)
+					self.nameButton.undraw()
+					self.nameEntry.undraw()
+
+					self.nameEntry = Text(self.newNamePosition, name)
+					self.nameEntry.setFill("white")
+					self.nameEntry.draw(window)
+
+					window.getMouse()
+
+					self.scoreTitle.undraw()
+					self.nameEntry.undraw()
+
+					self.scoreTitle = Text(Point(220, 310), "[TOP 5]")
+					self.scoreTitle.setFill("red")
+
+					return
+
+	def game_over(self, window, score):
+		self.file = File("scores.txt")
+		self.rank = self.file.rank_score(score)
+
+		self.logo.draw(window)
+		self.namePlate.draw(window)
+
+		if (self.rank < 5):
+			self.new_score(window, score, self.rank)
+			self.undraw_scores()
+
+		self.logo.undraw()
+		self.namePlate.undraw()
+
+		return
+
 
 class Hud():
 	def __init__(self):
@@ -362,25 +467,9 @@ class Hud():
 
 		return
 
-	def game_over(self, window):
-		self.waiting = True
-
+	def undraw(self, window):
 		self.score.undraw()
 		self.bar.undraw()
-
-		self.gameOverText.draw(window)
-		self.menuButton.draw(window)
-
-		while (self.waiting):
-			self.click = window.getMouse()
-			self.clickX = self.click.getX()
-			self.clickY = self.click.getY()
-
-			if (160 < self.clickX < 280):
-				if (410 < self.clickY < 450):
-					self.gameOverText.undraw()
-					self.menuButton.undraw()
-					self.waiting = False
 
 		return
 
@@ -425,3 +514,18 @@ class File():
 			f.write('\n' + str(score) + ',' + name)
 
 		return
+
+	def rank_score(self, score):
+		with open(self.source, 'r') as f:
+			self.mylist = f.read().splitlines()
+
+		self.mylist.sort(reverse = True)
+
+		for i in range (len(self.mylist)):
+			self.mylist[i] = int(self.mylist[i].split(',')[0])
+
+		for i in range (len(self.mylist)):
+			if (score > self.mylist[i]):
+				return i
+
+		return len(self.mylist)
