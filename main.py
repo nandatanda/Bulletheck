@@ -1,5 +1,50 @@
 import graphics
 import engine
+import random
+
+def build_attack():
+	crisscrosses = {
+		1 : engine.CrissCross('narrow', 'fast'),
+		2 : engine.CrissCross('narrow', 'medium'),
+		3 : engine.CrissCross('narrow', 'slow'),
+		4 : engine.CrissCross('medium', 'fast'),
+		5 : engine.CrissCross('medium', 'medium'),
+		6 : engine.CrissCross('medium', 'slow'),
+		7 : engine.CrissCross('wide', 'fast'),
+		8 : engine.CrissCross('wide', 'medium'),
+		9 : engine.CrissCross('wide', 'slow')}
+
+	point = graphics.Point(random.randint(20, 420), 0)
+	cooldown = random.randint(9, 13)
+	speed = random.randint(5, 9)
+	number = random.randint(6, 12)
+	direction = ['left', 'right']
+	direction = random.choice(direction)
+
+	steps = {
+		1 : engine.Step(point, cooldown, speed, number, direction),
+		2 : engine.Step(graphics.Point(420,0), cooldown, speed, 14, 'left'),
+		3 : engine.Step(graphics.Point(20,0), cooldown, speed, 14, 'right'),
+		4 : engine.Step(graphics.Point(220,0), cooldown, speed, number, direction)}
+
+	point = random.randint(1, 5)
+	rotations = random.randint(5, 10)
+	speed = ['fast', 'slow']
+	speed = random.choice(speed)
+
+	spiral = engine.Spiral(point, rotations, speed)
+
+	choice = ['crisscross', 'step', 'spiral']
+	choice = random.choice(choice)
+
+	if (choice == 'crisscross'):
+		choice = crisscrosses.get(random.randint(1, 9))
+	elif (choice == 'step'):
+		choice = steps.get(random.randint(1, 4))
+	elif (choice == 'spiral'):
+		choice = spiral
+
+	return choice
 
 def main():
 	winX = 440
@@ -18,11 +63,15 @@ def main():
 	window.setBackground("black")
 	wallpaper.draw(window)
 
+	patternList = list()
+
 	while (window):
 		menu.main(window)
 
 		player.score = 0
 		player.lives = 4
+		patternNumber = 0
+		nextSpawn = random.randint(125, 160)
 
 		player = engine.Player(playerSpawn, playerSpeed)
 
@@ -32,42 +81,22 @@ def main():
 		hud.update_bar(window, player)
 		hud.update_score(window, player.score)
 
-		attack1 = engine.Line(graphics.Point(220,-50), 25, 3, 100, graphics.Point(.3,1))
-		attack2 = engine.Line(graphics.Point(220,-50), 25, 6, 100, graphics.Point(-.3,1))
-		attack3 = engine.Line(graphics.Point(220,-50), 30, 7, 100, graphics.Point(.1,1))
-		attack4 = engine.Line(graphics.Point(220,-50), 45, 3, 100, graphics.Point(-.1,1))
-		attack5 = engine.Line(graphics.Point(220,-50), 53, 5, 100, graphics.Point(0,1))
 
 		while (player.lives > 0):
 			# Game loop starts here.
 
+			if (player.score % nextSpawn == 0):
+				nextSpawn = random.randint(125, 160)
+				patternList.append(build_attack())
+
 			player.hit = False
 			player.move(window.checkKey())
 
-			attack1.fire(window)
-			attack1.move()
-			if (attack1.detect_hit(player)):
-				player.hit = True
-
-			attack2.fire(window)
-			attack2.move()
-			if (attack2.detect_hit(player)):
-				player.hit = True
-
-			attack3.fire(window)
-			attack3.move()
-			if (attack3.detect_hit(player)):
-				player.hit = True
-
-			attack4.fire(window)
-			attack4.move()
-			if (attack4.detect_hit(player)):
-				player.hit = True
-
-			attack5.fire(window)
-			attack5.move()
-			if (attack5.detect_hit(player)):
-				player.hit = True
+			for i in range (len(patternList)):
+				patternList[i].fire(window)
+				patternList[i].move()
+				if (patternList[i].detect_hit(player)):
+					player.hit = True
 
 			player.score = player.score + 1
 
@@ -79,14 +108,10 @@ def main():
 			hud.update_score(window, player.score)
 
 			if (player.lives == 0):
-				attack1.undraw()
-				attack2.undraw()
-				attack3.undraw()
-				attack4.undraw()
-				attack5.undraw()
+				for i in range (len(patternList)):
+					patternList[i].undraw()
 
 				player.undraw()
-
 				hud.undraw(window)
 
 				menu.game_over(window, player.score)

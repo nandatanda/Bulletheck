@@ -196,18 +196,194 @@ class Line(Pattern):
 		return False
 
 class Step(Pattern):
-	def __init__(self, position, rof, speed, number):
+	def __init__(self, position, rof, speed, number, direction):
 		Pattern.__init__(self, position, rof, speed)
 		self.number = number
+		self.direction = direction
 		self.list = list()
 		self.frame = 0
 		self.bullet = 0
-		self.step = 0
+		self.step = 30
 
 		for i in range (number):
-			self.list.append(Bullet(position, speed, direction))
-			self.step = self.step + 20
-	pass
+			self.list.append(Bullet(position, speed, Point(0,1)))
+
+			if (direction == "left"):
+				position = Point(position.getX() - self.step, 0)
+			elif (direction == "right"):
+				position = Point(position.getX() + self.step, 0)
+
+	def fire(self, window):
+		if (self.bullet == self.number):
+			pass
+		elif (self.frame % self.rof == 0):
+			self.list[self.bullet].draw(window)
+			self.bullet = self.bullet + 1
+
+		return
+
+	def move(self):
+		for i in range (self.bullet):
+			self.list[i].move()
+
+		self.frame = self.frame + 1
+
+		return
+
+	def detect_hit(self, player):
+		for i in range (self.bullet):
+			if (self.list[i].detect_hit(player)):
+				return True
+
+		return False
+
+	def undraw(self):
+		for i in range (len(self.list)):
+			self.list[i].undraw()
+
+		return
+
+class CrissCross():
+
+	"""Width can be 'narrow', 'medium', or 'wide', and speed can be 'fast', 'medium', or 'slow'."""
+
+	def __init__(self, width, speed):
+		self.width = width
+		self.speed = speed
+		self.framesElapsed = 0
+
+		if (width == 'narrow'):
+			aStart = Point(160, 0)
+			bStart = Point(280, 0)
+			self.number = 4
+		elif (width == 'medium'):
+			aStart = Point(100, 0)
+			bStart = Point(340, 0)
+			self.number = 8
+		elif (width == 'wide'):
+			aStart = Point(40, 0)
+			bStart = Point(400, 0)
+			self.number = 12
+
+		if (speed == 'fast'):
+			pipSpeed = 9
+			self.cooldown = 8
+		elif (speed == 'medium'):
+			pipSpeed = 7
+			self.cooldown = 16
+		elif (speed == 'slow'):
+			pipSpeed = 5
+			self.cooldown = 24
+
+		self.criss = Step(aStart, self.cooldown, pipSpeed, self.number, "right")
+		self.cross = Step(bStart, self.cooldown, pipSpeed, self.number, "left")
+
+	def fire(self, window):
+		if (self.criss.bullet == self.number):
+			pass
+		elif (self.framesElapsed % self.cooldown == 0):
+			self.criss.list[self.criss.bullet].draw(window)
+			self.criss.bullet = self.criss.bullet + 1
+
+		if (self.cross.bullet == self.number):
+			pass
+		elif (self.framesElapsed % self.cooldown == 0):
+			self.cross.list[self.cross.bullet].draw(window)
+			self.cross.bullet = self.cross.bullet + 1
+
+		return
+
+	def move(self):
+		for i in range (self.criss.bullet):
+			self.criss.list[i].move()
+		for i in range (self.cross.bullet):
+			self.cross.list[i].move()
+
+		self.framesElapsed = self.framesElapsed + 1
+
+		return
+
+	def detect_hit(self, player):
+		for i in range (self.criss.bullet):
+			if (self.criss.list[i].detect_hit(player)):
+				return True
+
+		for i in range (self.cross.bullet):
+			if (self.cross.list[i].detect_hit(player)):
+				return True
+
+		return False
+
+	def undraw(self):
+		for i in range (self.criss.bullet):
+			self.criss.list[i].undraw()
+		for i in range (self.cross.bullet):
+			self.cross.list[i].undraw()
+
+
+class Spiral():
+	def __init__(self, position, rotations, speed):
+		self.speed = speed
+		self.position = position
+		self.drawn = 0
+		self.framesElapsed = 0
+
+		self.mylist = list()
+
+		spawns = {
+			1 : Point(124, 0),
+			2 : Point(186, 0),
+			3 : Point(248, 0),
+			4 : Point(310, 0),
+			5 : Point(372, 0)}
+
+		if (speed == 'fast'):
+			pipSpeed = 9
+			self.cooldown = 1
+		elif (speed == 'medium'):
+			pipSpeed = 7
+			self.cooldown = 3
+		elif (speed == 'slow'):
+			pipSpeed = 5
+			self.cooldown = 5
+
+		for i in range (rotations):
+			for n in range (9):
+				offset = (n * .1)
+				self.mylist.append(Bullet(spawns.get(position), pipSpeed, Point(offset, -1 + offset)))
+				self.mylist.append(Bullet(spawns.get(position), pipSpeed, Point(1 - offset, offset)))
+				self.mylist.append(Bullet(spawns.get(position), pipSpeed, Point(-offset, 1 - offset)))
+				self.mylist.append(Bullet(spawns.get(position), pipSpeed, Point(-1 + offset, offset)))
+
+	def fire(self, window):
+		cooldown = self.cooldown
+
+		if (self.drawn == len(self.mylist)):
+			pass
+		elif (self.framesElapsed % cooldown == 0):
+			self.mylist[self.drawn].draw(window)
+			self.drawn = self.drawn + 1
+
+	def move(self):
+		for i in range (self.drawn):
+			self.mylist[i].move()
+
+		self.framesElapsed = self.framesElapsed + 1
+
+		return
+
+	def detect_hit(self, player):
+		for i in range (self.drawn):
+			if (self.mylist[i].detect_hit(player)):
+				return True
+
+		return False
+
+	def undraw(self):
+		for i in range (self.drawn):
+			self.mylist[i].undraw()
+
+		return
 
 
 class Menu():

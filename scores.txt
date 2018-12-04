@@ -1,11 +1,16 @@
-100,Sample Text
-101,Sample Text
-102,Sample Text
-103,Sample Text
-104,Sample Text
-236,5Enter name, then click 'x'.
-320,Enter name, then click 'x'.
-252,grsgsegsegf
-252,cghcgjcgjcgjcgj
-252,Pollywags
-252,hhhh
+000,No Scores Yet!
+000,No Scores Yet!
+000,No Scores Yet!
+000,No Scores Yet!
+000,No Scores Yet!
+788,khbkhbkhv
+457,woah there
+444,sddsdsd
+375,wdwdwdw
+170,wdwadadwa
+202,wdadadw
+235,wdwadawdwad
+260,wdwd
+290,wdadwawdawd
+333,wadawdawd
+796,awwdawd
