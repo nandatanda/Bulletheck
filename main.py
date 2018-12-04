@@ -63,8 +63,6 @@ def main():
 	window.setBackground("black")
 	wallpaper.draw(window)
 
-	patternList = list()
-
 	while (window):
 		menu.main(window)
 
@@ -81,6 +79,7 @@ def main():
 		hud.update_bar(window, player)
 		hud.update_score(window, player.score)
 
+		patternList = list()
 
 		while (player.lives > 0):
 			# Game loop starts here.
@@ -91,7 +90,6 @@ def main():
 
 			player.hit = False
 			player.move(window.checkKey())
-
 			for i in range (len(patternList)):
 				patternList[i].fire(window)
 				patternList[i].move()
@@ -107,6 +105,7 @@ def main():
 			hud.update_bar(window, player)
 			hud.update_score(window, player.score)
 
+
 			if (player.lives == 0):
 				for i in range (len(patternList)):
 					patternList[i].undraw()
@@ -117,6 +116,7 @@ def main():
 				menu.game_over(window, player.score)
 
 			graphics.update(30)
+			# Game loop ends here.
 
 	return
 

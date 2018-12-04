@@ -364,6 +364,8 @@ class Spiral():
 			self.mylist[self.drawn].draw(window)
 			self.drawn = self.drawn + 1
 
+			return
+
 	def move(self):
 		for i in range (self.drawn):
 			self.mylist[i].move()
