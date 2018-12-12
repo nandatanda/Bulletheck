@@ -1,4 +1,5 @@
 from graphics import *
+from random import randint, choice
 
 class Player():
 
@@ -544,11 +545,13 @@ class Menu():
 			self.scoreTitle = Text(Point(220, 310), "[NEW HIGH SCORE]")
 			self.scoreTitle.setFill("red")
 
+			defaultMessage = "Enter name and hit 'return'"
+
 			self.newNamePosition = Point(220, 360 + self.adjustment)
 			self.nameEntry = Entry(self.newNamePosition, 20)
 			self.nameEntry.setFill("black")
 			self.nameEntry.setTextColor("white")
-			self.nameEntry.setText("Enter name and hit 'return'")
+			self.nameEntry.setText(defaultMessage)
 
 			self.nameButton = Image(Point(360, 360 + self.adjustment), "assets/buttons/x_25x25.gif")
 
@@ -569,26 +572,26 @@ class Menu():
 				if (click):
 					if (self.check_x(click, self.adjustment)):
 						self.nameEntry.setText("")
-
-				if (press == "Return"):
-					name = self.nameEntry.getText()
-					self.file.add_entry(score, name)
-					self.nameButton.undraw()
-					self.nameEntry.undraw()
-
-					self.nameEntry = Text(self.newNamePosition, name)
-					self.nameEntry.setFill("white")
-					self.nameEntry.draw(window)
-
-					window.getMouse()
-
-					self.scoreTitle.undraw()
-					self.nameEntry.undraw()
-
-					self.scoreTitle = Text(Point(220, 310), "[TOP 5]")
-					self.scoreTitle.setFill("red")
-
-					return
+				if (press):
+					if (press == "Return"):
+						name = self.nameEntry.getText()
+						self.file.add_entry(score, name)
+						self.nameButton.undraw()
+						self.nameEntry.undraw()
+						self.nameEntry = Text(self.newNamePosition, name)
+						self.nameEntry.setFill("white")
+						self.nameEntry.draw(window)
+						while (True):
+							click = window.checkMouse()
+							press = window.checkKey()
+							if (click or press):
+								self.scoreTitle.undraw()
+								self.nameEntry.undraw()
+								self.scoreTitle = Text(Point(220, 310), "[TOP 5]")
+								self.scoreTitle.setFill("red")
+								return
+					elif (self.nameEntry.getText() == press + defaultMessage):
+						self.nameEntry.setText(press)
 
 	def game_over(self, window, score):
 		self.file = File("scores.txt")
@@ -707,3 +710,46 @@ class File():
 				return i
 
 		return len(self.mylist)
+
+
+def build_attack():
+	crisscrosses = {
+		1 : CrissCross('narrow', 'fast'),
+		2 : CrissCross('narrow', 'medium'),
+		3 : CrissCross('narrow', 'slow'),
+		4 : CrissCross('medium', 'fast'),
+		5 : CrissCross('medium', 'medium'),
+		6 : CrissCross('medium', 'slow'),
+		7 : CrissCross('wide', 'fast'),
+		8 : CrissCross('wide', 'medium'),
+		9 : CrissCross('wide', 'slow')}
+
+	point = Point(randint(20, 420), 0)
+	cooldown = randint(9, 13)
+	speed = randint(5, 9)
+	number = randint(6, 12)
+	directions = ['left', 'right']
+	direction = choice(directions)
+
+	steps = {
+		1 : Step(point, cooldown, speed, number, direction),
+		2 : Step(Point(420,0), cooldown, speed, 14, 'left'),
+		3 : Step(Point(20,0), cooldown, speed, 14, 'right'),
+		4 : Step(Point(220,0), cooldown, speed, number, direction)}
+
+	point = randint(1, 5)
+	rotations = randint(5, 10)
+	speeds = ['fast', 'slow']
+	speed = choice(speeds)
+
+	spiral = Spiral(point, rotations, speed)
+
+	type = ['crisscross', 'step', 'spiral']
+	type = choice(type)
+
+	if (type == 'crisscross'):
+		return crisscrosses.get(randint(1, 9))
+	elif (type == 'step'):
+		return steps.get(randint(1, 4))
+	elif (type == 'spiral'):
+		return spiral

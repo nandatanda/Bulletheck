@@ -1,50 +1,7 @@
+from random import randint
 import graphics
 import engine
-import random
 
-def build_attack():
-	crisscrosses = {
-		1 : engine.CrissCross('narrow', 'fast'),
-		2 : engine.CrissCross('narrow', 'medium'),
-		3 : engine.CrissCross('narrow', 'slow'),
-		4 : engine.CrissCross('medium', 'fast'),
-		5 : engine.CrissCross('medium', 'medium'),
-		6 : engine.CrissCross('medium', 'slow'),
-		7 : engine.CrissCross('wide', 'fast'),
-		8 : engine.CrissCross('wide', 'medium'),
-		9 : engine.CrissCross('wide', 'slow')}
-
-	point = graphics.Point(random.randint(20, 420), 0)
-	cooldown = random.randint(9, 13)
-	speed = random.randint(5, 9)
-	number = random.randint(6, 12)
-	direction = ['left', 'right']
-	direction = random.choice(direction)
-
-	steps = {
-		1 : engine.Step(point, cooldown, speed, number, direction),
-		2 : engine.Step(graphics.Point(420,0), cooldown, speed, 14, 'left'),
-		3 : engine.Step(graphics.Point(20,0), cooldown, speed, 14, 'right'),
-		4 : engine.Step(graphics.Point(220,0), cooldown, speed, number, direction)}
-
-	point = random.randint(1, 5)
-	rotations = random.randint(5, 10)
-	speed = ['fast', 'slow']
-	speed = random.choice(speed)
-
-	spiral = engine.Spiral(point, rotations, speed)
-
-	choice = ['crisscross', 'step', 'spiral']
-	choice = random.choice(choice)
-
-	if (choice == 'crisscross'):
-		choice = crisscrosses.get(random.randint(1, 9))
-	elif (choice == 'step'):
-		choice = steps.get(random.randint(1, 4))
-	elif (choice == 'spiral'):
-		choice = spiral
-
-	return choice
 
 def main():
 	winX = 440
@@ -69,7 +26,7 @@ def main():
 		player.score = 0
 		player.lives = 4
 		patternNumber = 0
-		nextSpawn = random.randint(125, 160)
+		nextSpawn = randint(125, 160)
 
 		player = engine.Player(playerSpawn, playerSpeed)
 
@@ -85,8 +42,8 @@ def main():
 			# Game loop starts here.
 
 			if (player.score % nextSpawn == 0):
-				nextSpawn = random.randint(125, 160)
-				patternList.append(build_attack())
+				nextSpawn = randint(125, 160)
+				patternList.append(engine.build_attack())
 
 			player.hit = False
 			player.move(window.checkKey())
