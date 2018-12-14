@@ -1,4 +1,5 @@
 from random import randint
+from time import sleep
 import graphics
 import engine
 
@@ -56,6 +57,7 @@ def main():
 				player.undraw()
 				hud.undraw(window)
 				menu.game_over(window, player.score)
+			sleep(.03)
 			graphics.update(30)
 			# Game loop ends here.
 
