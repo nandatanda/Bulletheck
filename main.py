@@ -22,7 +22,7 @@ def main():
 		player.lives = 4
 		patternNumber = 0
 		nextSpawn = randint(125, 160)
-		player = engine.Player(playerSpawn, playerSpeed)
+		player = engine.Player()
 		patternList = list()
 
 		player.draw(window)
