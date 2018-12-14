@@ -3,7 +3,9 @@ from random import randint, choice
 
 class Player():
 
-	def __init__(self, position, speed):
+	"""Contains all methods used for controlling and updating the main character."""
+
+	def __init__(self, position=Point(220,440), speed=20):
 		self.position = position
 		self.speed = speed
 		self.image = Image(position, "assets/ship_50x50.gif")
@@ -13,18 +15,15 @@ class Player():
 		self.hitframes = 0
 		self.shieldtime = 45
 		self.score = 0
-
 		self.shield = Circle(self.position, self.radius + 10)
 		self.shield.setOutline("red")
 
 	def draw(self, window):
 		self.image.draw(window)
-
 		return
 
 	def undraw(self):
 		self.image.undraw()
-
 		return
 
 	def move(self, key):
@@ -32,60 +31,52 @@ class Player():
 		d = self.speed
 		x = self.position.getX()
 		y = self.position.getY()
-
-		if ((key == "W" or key == "w") and y > 0):
+		upBinds = ('Up', 'W', 'w')
+		downBinds = ('Down', 'S', 's')
+		leftBinds = ('Left', 'A', 'a')
+		rightBinds = ('Right', 'D', 'd')
+		if key in upBinds and y > 0:
 			self.image.move(0, -d)
 			self.shield.move(0, -d)
 			self.position = Point(x, y - d)
-
-		elif ((key == "S" or key == "s") and y < 660):
+		elif key in downBinds and y < 660:
 			self.image.move(0, d)
 			self.shield.move(0, d)
 			self.position = Point(x, y + d)
-
-		elif ((key == "A" or key == "a") and x > 0):
+		elif key in leftBinds and x > 0:
 			self.image.move(-d, 0)
 			self.shield.move(-d, 0)
 			self.position = Point(x - d, y)
-
-		elif ((key == "D" or key == "d") and x < 440):
+		elif key in rightBinds and x < 440:
 			self.image.move(d, 0)
 			self.shield.move(d, 0)
 			self.position = Point(x + d, y)
-
 		return
 
 	def update_hitframes(self):
-		if (self.hitframes == 0):
-			if (self.hit):
+		if self.hitframes == 0:
+			if self.hit:
 				self.hitframes = self.hitframes + 1
-
-		elif (0 < self.hitframes < self.shieldtime):
+		elif 0 < self.hitframes < self.shieldtime:
 			self.hitframes = self.hitframes + 1
-
-		elif (self.hitframes == self.shieldtime):
+		elif self.hitframes == self.shieldtime:
 			self.hitframes = 0
-
 		return
 
 	def update_lives(self):
-		if (self.hitframes == 1):
+		if self.hitframes == 1:
 			self.lives = self.lives - 1
-
-		elif (self.score % 500 == 0):
-			if (self.lives < 4):
+		elif self.score % 500 == 0:
+			if self.lives < 4:
 				self.lives = self.lives + 1
-
 			return
 
 	def update_shield(self, window):
-		if (self.hitframes == 1):
-			if(self.lives > 0):
+		if self.hitframes == 1:
+			if self.lives > 0:
 				self.shield.draw(window)
-
-		if (self.hitframes == 45):
+		if self.hitframes == 45:
 			self.shield.undraw()
-
 		return
 
 
@@ -103,12 +94,10 @@ class Bullet():
 
 	def draw(self, window):
 		self.image.draw(window)
-
 		return
 
 	def undraw(self):
 		self.image.undraw()
-
 		return
 
 	def move(self):
@@ -117,10 +106,8 @@ class Bullet():
 		py = self.position.getY()
 		dx = self.direction.getX() * self.speed
 		dy = self.direction.getY() * self.speed
-
 		self.image.move(dx, dy)
 		self.position = Point(px + dx, py + dy)
-
 		return
 
 	def detect_hit(self, player):
@@ -131,13 +118,11 @@ class Bullet():
 		by = self.position.getY()
 		pr = player.radius
 		br = self.radius
-
 		dx = abs(px - bx)
 		dy = abs(py - by)
 
 		if (dx + dy <= pr + br):
 			return True
-
 		return False
 
 
@@ -162,7 +147,6 @@ class Line(Pattern):
 		self.list = list()
 		self.frame = 0
 		self.bullet = 0
-
 		for i in range (number):
 			self.list.append(Bullet(position, speed, direction))
 
@@ -172,28 +156,23 @@ class Line(Pattern):
 		elif (self.frame % self.rof == 0):
 			self.list[self.bullet].draw(window)
 			self.bullet = self.bullet + 1
-
 		return
 
 	def move(self):
 		for i in range (self.bullet):
 			self.list[i].move()
-
 		self.frame = self.frame + 1
-
 		return
 
 	def undraw(self):
 		for i in range (self.bullet):
 			self.list[i].undraw()
-
 		return
 
 	def detect_hit(self, player):
 		for i in range (self.bullet):
 			if (self.list[i].detect_hit(player)):
 				return True
-
 		return False
 
 class Step(Pattern):
@@ -205,10 +184,8 @@ class Step(Pattern):
 		self.frame = 0
 		self.bullet = 0
 		self.step = 30
-
 		for i in range (number):
 			self.list.append(Bullet(position, speed, Point(0,1)))
-
 			if (direction == "left"):
 				position = Point(position.getX() - self.step, 0)
 			elif (direction == "right"):
@@ -220,28 +197,23 @@ class Step(Pattern):
 		elif (self.frame % self.rof == 0):
 			self.list[self.bullet].draw(window)
 			self.bullet = self.bullet + 1
-
 		return
 
 	def move(self):
 		for i in range (self.bullet):
 			self.list[i].move()
-
 		self.frame = self.frame + 1
-
 		return
 
 	def detect_hit(self, player):
 		for i in range (self.bullet):
 			if (self.list[i].detect_hit(player)):
 				return True
-
 		return False
 
 	def undraw(self):
 		for i in range (len(self.list)):
 			self.list[i].undraw()
-
 		return
 
 class CrissCross():
@@ -252,7 +224,6 @@ class CrissCross():
 		self.width = width
 		self.speed = speed
 		self.framesElapsed = 0
-
 		if (width == 'narrow'):
 			aStart = Point(160, 0)
 			bStart = Point(280, 0)
@@ -265,7 +236,6 @@ class CrissCross():
 			aStart = Point(40, 0)
 			bStart = Point(400, 0)
 			self.number = 12
-
 		if (speed == 'fast'):
 			pipSpeed = 9
 			self.cooldown = 8
@@ -275,7 +245,6 @@ class CrissCross():
 		elif (speed == 'slow'):
 			pipSpeed = 5
 			self.cooldown = 24
-
 		self.criss = Step(aStart, self.cooldown, pipSpeed, self.number, "right")
 		self.cross = Step(bStart, self.cooldown, pipSpeed, self.number, "left")
 
@@ -291,7 +260,6 @@ class CrissCross():
 		elif (self.framesElapsed % self.cooldown == 0):
 			self.cross.list[self.cross.bullet].draw(window)
 			self.cross.bullet = self.cross.bullet + 1
-
 		return
 
 	def move(self):
@@ -301,7 +269,6 @@ class CrissCross():
 			self.cross.list[i].move()
 
 		self.framesElapsed = self.framesElapsed + 1
-
 		return
 
 	def detect_hit(self, player):
@@ -358,13 +325,11 @@ class Spiral():
 
 	def fire(self, window):
 		cooldown = self.cooldown
-
 		if (self.drawn == len(self.mylist)):
 			pass
 		elif (self.framesElapsed % cooldown == 0):
 			self.mylist[self.drawn].draw(window)
 			self.drawn = self.drawn + 1
-
 			return
 
 	def move(self):
@@ -511,40 +476,52 @@ class Menu():
 
 	def main(self, window):
 		self.draw_main(window)
-
 		while (self.isOpen):
 			click = window.checkMouse()
-
+			press = window.checkKey()
+			if (press):
+				if (press == 'Return'):
+					self.undraw_main()
+					return
+				elif (press in ('H', 'h')):
+					self.undraw_main()
+					self.logo.draw(window)
+					self.namePlate.draw(window)
+					self.draw_scores(window)
+					waiting = True
+					while waiting:
+						click2 = window.checkMouse()
+						press2 = window.checkKey()
+						if click2 or press2 in ('H', 'h'):
+							self.undraw_scores()
+							self.draw_main(window)
+							waiting = False
+				elif (press == 'Escape'):
+					self.undraw_main()
+					quit()
 			if (click):
 				if (self.check_start(click)):
 					self.undraw_main()
 					return
-
 				elif (self.check_scores(click)):
 					self.undraw_main()
 					self.logo.draw(window)
 					self.namePlate.draw(window)
 					self.draw_scores(window)
-
 					window.getMouse()
-
 					self.undraw_scores()
 					self.draw_main(window)
-
 				elif (self.check_exit(click)):
 					self.undraw_main()
 					quit()
-
 		return
 
 	def new_score(self, window, score, rank):
 			self.isOpen = True
 			self.adjustment = 40 * self.rank
-
 			self.newScorePosition = Point(60, 360 + self.adjustment)
 			self.scoreTitle = Text(Point(220, 310), "[NEW HIGH SCORE]")
 			self.scoreTitle.setFill("red")
-
 			defaultMessage = "Enter name and hit 'return'"
 
 			self.newNamePosition = Point(220, 360 + self.adjustment)
@@ -552,13 +529,10 @@ class Menu():
 			self.nameEntry.setFill("black")
 			self.nameEntry.setTextColor("white")
 			self.nameEntry.setText(defaultMessage)
-
 			self.nameButton = Image(Point(360, 360 + self.adjustment), "assets/buttons/x_25x25.gif")
-
 			self.draw_scores(window)
 			self.nameEntry.draw(window)
 			self.nameButton.draw(window)
-
 			self.textName[self.rank].undraw()
 			self.textScore[self.rank].undraw()
 			self.textScore[self.rank] = Text(self.newScorePosition, score)
@@ -654,6 +628,22 @@ class Hud():
 
 		return
 
+	def pause(self, key, window):
+		pauseBinds = ('Shift_L', 'Shift_R', 'P', 'p')
+		if key in pauseBinds:
+			box = Rectangle(Point(180, 317.5), Point(260, 342.5))
+			box.setFill('black')
+			box.draw(window)
+			text = Text(Point(220, 330), 'PAUSED')
+			text.setFill('white')
+			text.draw(window)
+			while True:
+				click = window.checkMouse()
+				press = window.checkKey()
+				if click or press:
+					text.undraw()
+					box.undraw()
+					return
 
 class File():
 	def __init__(self, source):
