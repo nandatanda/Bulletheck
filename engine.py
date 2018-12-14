@@ -66,7 +66,7 @@ class Player():
 	def update_lives(self):
 		if self.hitframes == 1:
 			self.lives = self.lives - 1
-		elif self.score % 500 == 0:
+		elif self.score % 400 == 0:
 			if self.lives < 4:
 				self.lives = self.lives + 1
 			return
